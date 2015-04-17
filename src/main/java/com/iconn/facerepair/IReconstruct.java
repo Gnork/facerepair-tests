@@ -10,5 +10,5 @@ package com.iconn.facerepair;
  * @author christoph
  */
 public interface IReconstruct {
-    public float[][] apply(float[][] broken_data, boolean[][] inpaint_positions);
+    public float[][][] apply(float[][] broken_data, boolean[][] inpaint_positions);
 }
