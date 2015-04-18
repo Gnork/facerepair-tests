@@ -61,7 +61,8 @@ public class IO {
     }
     
     public static void writeResultsForImage(int testCase, int imageIndex, float[] originalImage, float[] brokenImage, float[][] resultImages){
-        
+       String outputDir = Settings.workDir + Settings.testOutput;
+       
     }
     
     public static float[][] loadWeights(String path){

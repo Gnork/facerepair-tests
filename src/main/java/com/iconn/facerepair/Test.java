@@ -7,6 +7,7 @@ package com.iconn.facerepair;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.io.IOException;
 
 /**
  *
@@ -19,7 +20,7 @@ public class Test {
     private float[][] data;
     private static final Color brokenColor = Color.BLACK;
     
-    public void Test(String testData, String testOutput){
+    public void Test(String testData, String testOutput) throws IOException{
         this.testData = testData;
         this.testOutput = testOutput;
         
