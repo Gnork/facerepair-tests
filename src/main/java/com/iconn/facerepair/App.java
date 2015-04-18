@@ -12,7 +12,7 @@ public class App
         String outputFile = Settings.testOutput + "/errors.csv";
         FileWriter writer = new FileWriter(outputFile);
  
-        writer.write("rbmConfig;reconstructionError\n");
+        writer.write("rbmCombinations;reconstructionError\n");
         
         String w1000 = Settings.rbmWeights + "WildFaces_64x64_rgb_1kh_58380it_TE13,203_CVE14,907.dat";
         String w1500 = Settings.rbmWeights + "output_104000it_TE10,128_CVE12,156.dat";

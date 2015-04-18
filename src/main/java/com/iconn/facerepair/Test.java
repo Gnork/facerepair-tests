@@ -25,9 +25,16 @@ public class Test {
     public float run(IReconstruct recon, String testName) throws IOException{
         System.out.println("Test: " + testName);
         // generate test cases
-        Rectangle[] inpaintRects = new Rectangle[2];
+        Rectangle[] inpaintRects = new Rectangle[8];
         inpaintRects[0] = new Rectangle(0,0,32,64);
-        inpaintRects[1] = new Rectangle(22,0,20,64);
+        inpaintRects[1] = new Rectangle(0,0,64,32);
+        inpaintRects[2] = new Rectangle(0,32,64,32);
+        
+        inpaintRects[3] = new Rectangle(10,10,20,44);
+        inpaintRects[4] = new Rectangle(0,0,32,64);
+        inpaintRects[5] = new Rectangle(22,10,20,44);
+        inpaintRects[6] = new Rectangle(10,5,44,20);
+        inpaintRects[7] = new Rectangle(10,34,44,20);
         
         boolean[][] inpaintMaps = new boolean[inpaintRects.length][];
         for(int i = 0; i < inpaintMaps.length; ++i){
