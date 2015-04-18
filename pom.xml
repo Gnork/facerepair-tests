@@ -19,6 +19,18 @@
         <artifactId>WorkingJBlas</artifactId>
         <version>1.2.3</version>
     </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.4</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>net.imagej</groupId>
+      <artifactId>ij</artifactId>
+      <version>1.48v</version>
+      <type>jar</type>
+    </dependency>
   </dependencies>
   <repositories>
         <repository>
@@ -42,4 +54,8 @@
             <url>https://raw.github.com/Gnork/mvnrepo/master/releases</url>
         </repository>
     </repositories>
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
 </project>
