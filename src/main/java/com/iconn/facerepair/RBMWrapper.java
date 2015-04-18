@@ -7,6 +7,7 @@
 package com.iconn.facerepair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -26,7 +27,6 @@ public class RBMWrapper implements IReconstruct {
 
     @Override
     public float[][][] apply(float[][] brokenImages, boolean[] inpaintMap) {
-        float[][][] result = new float[rbms.size()][][];
         float[][] imagesWithMean = new float[brokenImages.length][];
         
         for(int i = 0; i < brokenImages.length; i++) {
@@ -52,7 +52,7 @@ public class RBMWrapper implements IReconstruct {
             for(int k = 0; k < inpaintMap.length; ++k){
                 int pos = k * 3;
                 if(!inpaintMap[k]){
-                    // copying original pixel daten
+                    // copying original pixel data
                     imageWithMean[pos] = brokenImages[i][pos];
                     imageWithMean[pos + 1] = brokenImages[i][pos + 1];
                     imageWithMean[pos + 2] = brokenImages[i][pos + 2];
@@ -66,18 +66,49 @@ public class RBMWrapper implements IReconstruct {
             imagesWithMean[i] = imageWithMean;
         }
         
+        float[][][] result = new float[rbms.size()*2 + 1][][];
+        result[0] = deepCopy(imagesWithMean);
+        
         float[][] visible = imagesWithMean;
         for(int i = 0; i < rbms.size(); i++) {
               RBMJBlas rbm = rbms.get(i);
             
               float[][] hidden = rbm.getHidden(visible, false);
-              visible = rbm.getVisible(hidden, false);
+              visible = rbm.getVisible(hidden, false);             
+              result[i * 2 + 1] = deepCopy(visible);
               
-              float[][] visibleRBMI = new float[visible.length][visible[0].length];
-              System.arraycopy(visible, 0, visibleRBMI, 0, visible.length);
-              result[i] = visibleRBMI;
+              insertOriginalPixelsInReconstruction(visible, brokenImages, inpaintMap);
+              result[i * 2 + 2] = deepCopy(visible);
         }
         
+        return result;
+    }
+    
+    public static void insertOriginalPixelsInReconstruction(float[][] reconstructions, float[][] brokenImages, boolean[] inpaintMap){
+        for(int i = 0; i < reconstructions.length; ++i){
+            for(int k = 0; k < inpaintMap.length; ++k){
+                int pos = k * 3;
+                if(!inpaintMap[k]){
+                    reconstructions[i][pos] = brokenImages[i][pos];
+                    reconstructions[i][pos + 1] = brokenImages[i][pos + 1];
+                    reconstructions[i][pos + 2] = brokenImages[i][pos + 2];
+                }
+            }
+        }
+    }
+    
+    // code from http://stackoverflow.com/a/1564856/1793836
+    public static float[][] deepCopy(float[][] original) {
+        if (original == null) {
+            return null;
+        }
+
+        final float[][] result = new float[original.length][];
+        for (int i = 0; i < original.length; i++) {
+            result[i] = Arrays.copyOf(original[i], original[i].length);
+            // For Java versions prior to Java 6 use the next:
+            // System.arraycopy(original[i], 0, result[i], 0, original[i].length);
+        }
         return result;
     }
     
