@@ -20,14 +20,11 @@ public class Test {
     private float[][] data;
     private static final Color brokenColor = Color.BLACK;
     
-    public void Test(String testData, String testOutput) throws IOException{
-        this.testData = testData;
-        this.testOutput = testOutput;
-        
-        this.data = IO.loadTestData(testData);
+    public Test() throws IOException{
+        this.data = IO.loadTestData(Settings.testData);
     }
     
-    public void run(IReconstruct recon){
+    public void run(IReconstruct recon) throws IOException{
         
         // generate test cases
         Rectangle[] inpaintRects = new Rectangle[2];

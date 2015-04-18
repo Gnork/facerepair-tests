@@ -1,9 +1,11 @@
 package com.iconn.facerepair;
 
+import java.io.IOException;
+
 public class App 
 {
     
-    public static void main( String[] args )
+    public static void main( String[] args ) throws IOException
     {
         String[] weights = {
             Settings.rbmWeights + "WildFaces_64x64_rgb_1kh_28380it.dat", 
@@ -11,6 +13,10 @@ public class App
             Settings.rbmWeights + "WildFaces_64x64_rgb_2kh_TE11,745_CVE13,817.dat"
         };
         
-        RBMWrapper rbms = new RBMWrapper(weights);
+        //RBMWrapper rbms = new RBMWrapper(weights);
+        
+        FakeReconstruct fake = new FakeReconstruct();
+        Test test = new Test();
+        test.run(fake);
     }
 }

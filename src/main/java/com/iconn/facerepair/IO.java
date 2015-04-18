@@ -36,6 +36,7 @@ public class IO {
         
         BufferedImage[] resultArray = new BufferedImage[result.size()];
         result.toArray(resultArray);
+        System.out.println(resultArray.length);
         return resultArray;
     }
     
@@ -74,11 +75,20 @@ public class IO {
         return result;
     }
     
-    public static void writeResultsForImage(int testCase, int imageIndex, float[] originalImage, float[] brokenImage, float[][] resultImages){
-       String outputDir = Settings.workDir + Settings.testOutput + "/" + testCase + "/ + imageIndex";
+    public static void writeResultsForImage(int testCase, int imageIndex, float[] originalImage, float[] brokenImage, float[][] resultImages) throws IOException{
+       String outputDir = Settings.testOutput + "/" + testCase + "/" + imageIndex;
        File outputDirFile = new File(outputDir);
        if (!outputDirFile.exists()) {
             outputDirFile.mkdirs();
+       }
+       File f = new File(outputDir + "/0.png");
+       ImageIO.write(floatToImage(originalImage), "png", f);
+       f = new File(outputDir + "/1.png");
+       ImageIO.write(floatToImage(brokenImage), "png", f);
+       for(int i = 0; i < resultImages.length; ++i){
+           int num = i + 2;
+           f = new File(outputDir + "/" + num + ".png");
+           ImageIO.write(floatToImage(resultImages[i]), "png", f);
        }
     }
     
