@@ -12,8 +12,8 @@ package com.iconn.facerepair;
 public class FakeReconstruct implements IReconstruct {
 
     @Override
-    public float[][][] apply(float[][] broken_data, boolean[][] inpaint_positions) {
-        return new float[][][]{broken_data};
+    public float[][][] apply(float[][] brokenData, boolean[] inpaintMap) {
+        return new float[][][]{brokenData};
     }
     
 }

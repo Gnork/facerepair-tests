@@ -25,38 +25,48 @@ public class RBMWrapper implements IReconstruct {
     };
 
     @Override
-    public float[][][] apply(float[][] broken_data, boolean[][] inpaint_positions) {
+    public float[][][] apply(float[][] brokenImages, boolean[] inpaintMap) {
         float[][][] result = new float[rbms.size()][][];
+        float[][] imagesWithMean = new float[brokenImages.length][];
         
-        for(int i = 0; i < broken_data.length; i++) {
+        for(int i = 0; i < brokenImages.length; i++) {
+            float[] imageWithMean = new float[brokenImages[i].length];
             // Calculating mean
             int sum = 0;
             float sumR = 0;
             float sumG = 0;
             float sumB = 0;
-            for(int j = 0; j < broken_data[0].length; j+=3) {
-                if(!inpaint_positions[i][j/3]) {
+            for(int k = 0; k < inpaintMap.length; ++k){
+                int pos = k * 3;
+                if(!inpaintMap[k]){
                     sum++;
-                    sumR+=broken_data[i][j+0];
-                    sumG+=broken_data[i][j+1];
-                    sumB+=broken_data[i][j+2];
+                    sumR += brokenImages[i][pos];
+                    sumG += brokenImages[i][pos + 1];
+                    sumB += brokenImages[i][pos + 2];
                 }
             }
-            float avgR = sumR/sum;
-            float avgG = sumG/sum;
-            float avgB = sumB/sum;
+            float meanR = sumR/sum;
+            float meanG = sumG/sum;
+            float meanB = sumB/sum;
             
-            // Inserting mean into inpaint_positions
-            for(int j = 0; j < broken_data[0].length; j+=3) {
-                if(inpaint_positions[i][j/3]) {
-                    broken_data[i][j+0] = avgR;
-                    broken_data[i][j+1] = avgG;
-                    broken_data[i][j+2] = avgB;
+            for(int k = 0; k < inpaintMap.length; ++k){
+                int pos = k * 3;
+                if(!inpaintMap[k]){
+                    // copying original pixel daten
+                    imageWithMean[pos] = brokenImages[i][pos];
+                    imageWithMean[pos + 1] = brokenImages[i][pos + 1];
+                    imageWithMean[pos + 2] = brokenImages[i][pos + 2];
+                }else{
+                    // inserting mean at inpaint positions
+                    imageWithMean[pos] = meanR;
+                    imageWithMean[pos + 1] = meanG;
+                    imageWithMean[pos + 2] = meanB;
                 }
             }
+            imagesWithMean[i] = imageWithMean;
         }
         
-        float[][] visible = broken_data;
+        float[][] visible = imagesWithMean;
         for(int i = 0; i < rbms.size(); i++) {
               RBMJBlas rbm = rbms.get(i);
             

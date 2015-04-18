@@ -37,7 +37,8 @@ public class Test {
         // iterate through test cases
         for(int testCase = 0; testCase < inpaintMaps.length; ++testCase){
             float[][] brokenImages = breakImages(this.data, inpaintMaps[testCase]);
-            float[][][] testResults = recon.apply(brokenImages, inpaintMaps);
+            
+            float[][][] testResults = recon.apply(brokenImages, inpaintMaps[testCase]);
             
             // store result images for test case
             for(int imageIndex = 0; imageIndex < brokenImages.length; ++ imageIndex){
