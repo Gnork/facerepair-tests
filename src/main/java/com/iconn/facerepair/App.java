@@ -2,9 +2,6 @@ package com.iconn.facerepair;
 
 public class App 
 {
-    public static String workDir = "/mnt/data/facerepair";
-    public static String testData = workDir + "/data/1000_images_not_trained";
-    public static String testOutput = workDir + "/output";
     
     public static void main( String[] args )
     {
