@@ -60,9 +60,26 @@ public class IO {
         return result;
     }
     
+    public static BufferedImage floatToImage(float[] data){
+        int width = 64;
+        int height = 64;
+        int[] rgbData = new int[data.length / 3];
+        for(int i = 0; i < rgbData.length; ++i){
+            int pos = i * 3;
+            Color c = new Color(data[pos], data[pos + 1], data[pos + 2]);
+            rgbData[i] = c.getRGB();
+        }
+        BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        result.setRGB(0, 0, width, height, rgbData, 0, width);
+        return result;
+    }
+    
     public static void writeResultsForImage(int testCase, int imageIndex, float[] originalImage, float[] brokenImage, float[][] resultImages){
-       String outputDir = Settings.workDir + Settings.testOutput;
-       
+       String outputDir = Settings.workDir + Settings.testOutput + "/" + testCase + "/ + imageIndex";
+       File outputDirFile = new File(outputDir);
+       if (!outputDirFile.exists()) {
+            outputDirFile.mkdirs();
+       }
     }
     
     public static float[][] loadWeights(String path){
