@@ -13,4 +13,9 @@ public class IO {
     public static float[][] loadTestData(String testData){
         return null;
     }
+    
+    public static void writeResultsForImage(int testCase, int imageIndex, float[] originalImage, float[] brokenImage, float[][] resultImages){
+        
+    }
+    
 }

@@ -5,8 +5,8 @@
  */
 package com.iconn.facerepair;
 
+import java.awt.Color;
 import java.awt.Rectangle;
-import javafx.scene.paint.Color;
 
 /**
  *
@@ -27,19 +27,37 @@ public class Test {
     }
     
     public void run(IReconstruct recon){
-        Rectangle[] inpaintPositionsRect = new Rectangle[2];
-        inpaintPositionsRect[0] = new Rectangle(0,0,32,64);
-        inpaintPositionsRect[1] = new Rectangle(22,0,20,64);
         
-        boolean[][] inpaintPositions = new boolean[inpaintPositionsRect.length][];
-        for(int i = 0; i < inpaintPositions.length; ++i){
-            inpaintPositions[i] = createInpaintPositionsFromRect(inpaintPositionsRect[i]);
+        // generate test cases
+        Rectangle[] inpaintRects = new Rectangle[2];
+        inpaintRects[0] = new Rectangle(0,0,32,64);
+        inpaintRects[1] = new Rectangle(22,0,20,64);
+        
+        boolean[][] inpaintMaps = new boolean[inpaintRects.length][];
+        for(int i = 0; i < inpaintMaps.length; ++i){
+            inpaintMaps[i] = createInpaintPositionsFromRect(inpaintRects[i]);
         }
         
-        for(int i = 0; i < inpaintPositions.length; ++i){
-            float[][] brokenImage = breakImage(inpaintPositions[i]);
+        // iterate through test cases
+        for(int testCase = 0; testCase < inpaintMaps.length; ++testCase){
+            float[][] brokenImages = breakImages(this.data, inpaintMaps[testCase]);
+            float[][][] testResults = recon.apply(brokenImages, inpaintMaps);
+            
+            // store result images for test case
+            for(int imageIndex = 0; imageIndex < brokenImages.length; ++ imageIndex){
+                float[][] imageResults = new float[testResults.length][];
+                for (int resultIndex = 0; resultIndex < testResults.length; ++resultIndex){
+                    imageResults[resultIndex] = testResults[resultIndex][imageIndex];
+                }
+                IO.writeResultsForImage(testCase, imageIndex, this.data[imageIndex], brokenImages[imageIndex], imageResults);
+            }
+            
+            // calculate errors for test case
+            float[] errors = new float[brokenImages.length];
         }
     }
+    
+    
     
     public boolean[] createInpaintPositionsFromRect(Rectangle rect){
         boolean[] result = new boolean[64 * 64];
@@ -56,8 +74,32 @@ public class Test {
         return result;
     }
     
-    public float[][] breakImage(boolean[] inpaintPositions){
-        // TODO
-        return null;
+    public float[][] breakImages(float[][] originalImages, boolean[] inpaintMap){
+        float[][] results = new float[originalImages.length][];
+        for(int i = 0; i < originalImages.length; ++i){
+            results[i] = breakImage(originalImages[i], inpaintMap);
+        }
+        return results;
+    }
+    
+    public float[] breakImage(float[] originalImage, boolean[] inpaintMap){
+        float brokenColorR = brokenColor.getRed() / 255f;
+        float brokenColorG = brokenColor.getGreen() / 255f;
+        float brokenColorB = brokenColor.getBlue() / 255f;
+        
+        float[] result = new float[originalImage.length];
+        for(int i = 0; i < inpaintMap.length; ++i){
+            int pos = i * 3;
+            if (inpaintMap[i]){
+                result[pos] = brokenColorR;
+                result[pos + 1] = brokenColorG;
+                result[pos + 2] = brokenColorB;
+            }else{
+                result[pos] = originalImage[pos];
+                result[pos + 1] = originalImage[pos + 1];
+                result[pos + 2] = originalImage[pos + 2];
+            }
+        }
+        return result;
     }
 }
