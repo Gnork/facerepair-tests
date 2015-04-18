@@ -21,8 +21,8 @@ import javax.imageio.ImageIO;
  * @author christoph
  */
 public class IO {
-    public static float[][] loadTestData(String testData) throws IOException{
-        BufferedImage[] images = openImageFiles(testData);
+    public static float[][] loadTestData() throws IOException{
+        BufferedImage[] images = openImageFiles(Settings.testData);
         return imagesToFloat(images);
     }
     
@@ -75,8 +75,8 @@ public class IO {
         return result;
     }
     
-    public static void writeResultsForImage(int testCase, int imageIndex, float[] originalImage, float[] brokenImage, float[][] resultImages) throws IOException{
-       String outputDir = Settings.testOutput + "/" + testCase + "/" + imageIndex;
+    public static void writeResultsForImage(String testName, int testCase, int imageIndex, float[] originalImage, float[] brokenImage, float[][] resultImages) throws IOException{
+       String outputDir = Settings.testOutput + "/" + testName + "/" + testCase + "/" + imageIndex;
        File outputDirFile = new File(outputDir);
        if (!outputDirFile.exists()) {
             outputDirFile.mkdirs();

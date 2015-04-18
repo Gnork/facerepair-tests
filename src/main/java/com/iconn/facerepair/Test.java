@@ -14,17 +14,15 @@ import java.io.IOException;
  * @author christoph
  */
 public class Test {
-    private String testData;
-    private String testOutput;
     
     private float[][] data;
     private static final Color brokenColor = Color.BLACK;
     
     public Test() throws IOException{
-        this.data = IO.loadTestData(Settings.testData);
+        this.data = IO.loadTestData();
     }
     
-    public void run(IReconstruct recon) throws IOException{
+    public void run(IReconstruct recon, String testName) throws IOException{
         
         // generate test cases
         Rectangle[] inpaintRects = new Rectangle[2];
@@ -47,7 +45,7 @@ public class Test {
                 for (int resultIndex = 0; resultIndex < testResults.length; ++resultIndex){
                     imageResults[resultIndex] = testResults[resultIndex][imageIndex];
                 }
-                IO.writeResultsForImage(testCase, imageIndex, this.data[imageIndex], brokenImages[imageIndex], imageResults);
+                IO.writeResultsForImage(testName, testCase, imageIndex, this.data[imageIndex], brokenImages[imageIndex], imageResults);
             }
             
             // calculate errors for test case
