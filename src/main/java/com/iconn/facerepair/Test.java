@@ -17,7 +17,7 @@ public class Test {
     private String testOutput;
     
     private float[][] data;
-    private static Color brokenColor = Color.BLACK;
+    private static final Color brokenColor = Color.BLACK;
     
     public void Test(String testData, String testOutput){
         this.testData = testData;
@@ -46,11 +46,7 @@ public class Test {
         for(int y = 0; y < 64; ++y){
             for(int x = 0; x < 64; ++x){
                 int pos = y * 64 + x;
-                if(x >= rect.x && x < rect.width + rect.x && y >= rect.y && y < rect.height + rect.y){
-                    result[pos] = true;
-                }else{
-                    result[pos] = false;
-                }
+                result[pos] = x >= rect.x && x < rect.width + rect.x && y >= rect.y && y < rect.height + rect.y;
             }
         }
         return result;

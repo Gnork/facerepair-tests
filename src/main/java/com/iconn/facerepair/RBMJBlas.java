@@ -5,7 +5,6 @@
  */
 package com.iconn.facerepair;
 
-
 import org.jblas.FloatMatrix;
 import org.jblas.MatrixFunctions;
 
@@ -15,7 +14,7 @@ import org.jblas.MatrixFunctions;
  */
 public class RBMJBlas{
 
-    private FloatMatrix weights;
+    private final FloatMatrix weights;
 
     public RBMJBlas(float[][] weights) {
         this.weights = new FloatMatrix(weights);    
