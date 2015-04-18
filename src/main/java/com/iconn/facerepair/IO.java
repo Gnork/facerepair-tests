@@ -8,6 +8,7 @@ package com.iconn.facerepair;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.file.Files;
@@ -36,7 +37,6 @@ public class IO {
         
         BufferedImage[] resultArray = new BufferedImage[result.size()];
         result.toArray(resultArray);
-        System.out.println(resultArray.length);
         return resultArray;
     }
     
@@ -90,6 +90,28 @@ public class IO {
            f = new File(outputDir + "/" + num + ".png");
            ImageIO.write(floatToImage(resultImages[i]), "png", f);
        }
+    }
+    
+    public static void writeErrorsPerImage(String testName, int testCase, float[][] errors) throws IOException{
+        String outputFile = Settings.testOutput + "/" + testName + "/" + testCase + "/errors.csv";
+        FileWriter writer = new FileWriter(outputFile);
+ 
+        writer.write("image;reconstructionError;meanColorError\n");
+	for(int i = 0; i < errors.length; i++) {
+		writer.write(i + ";" + errors[i][0] + ";" + errors[i][1] + "\n");
+	}
+	writer.close();
+    }
+    
+    public static void writeErrorsPerTestCase(String testName, float[][] errors) throws IOException{
+        String outputFile = Settings.testOutput + "/" + testName + "/errors.csv";
+        FileWriter writer = new FileWriter(outputFile);
+ 
+        writer.write("testCase;reconstructionError;meanColorError\n");
+	for(int i = 0; i < errors.length; i++) {
+		writer.write(i + ";" + errors[i][0] + ";" + errors[i][1] + '\n');
+	}
+	writer.close();
     }
     
     public static float[][] loadWeights(String path){

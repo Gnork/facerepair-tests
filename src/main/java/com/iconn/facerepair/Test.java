@@ -22,8 +22,8 @@ public class Test {
         this.data = IO.loadTestData();
     }
     
-    public void run(IReconstruct recon, String testName) throws IOException{
-        
+    public float run(IReconstruct recon, String testName) throws IOException{
+        System.out.println("Test: " + testName);
         // generate test cases
         Rectangle[] inpaintRects = new Rectangle[2];
         inpaintRects[0] = new Rectangle(0,0,32,64);
@@ -34,8 +34,11 @@ public class Test {
             inpaintMaps[i] = createInpaintPositionsFromRect(inpaintRects[i]);
         }
         
+        float[][] errorsPerTestCase = new float[inpaintMaps.length][2];
+        
         // iterate through test cases
         for(int testCase = 0; testCase < inpaintMaps.length; ++testCase){
+            System.out.println("Case: " + testCase);
             float[][] brokenImages = breakImages(this.data, inpaintMaps[testCase]);
             
             float[][][] testResults = recon.apply(brokenImages, inpaintMaps[testCase]);
@@ -50,11 +53,47 @@ public class Test {
             }
             
             // calculate errors for test case
-            float[] errors = new float[brokenImages.length];
+            float[][] errorsPerImage = new float[brokenImages.length][2];
+            for(int i = 0; i < brokenImages.length; ++i){
+                // errors[i][0] is error for RBM reconstruction
+                errorsPerImage[i][0] = meanErrorPerImage(this.data[i], testResults[testResults.length - 1][i], inpaintMaps[testCase]);
+                // errors[i][1] is error for inserting mean color
+                errorsPerImage[i][1] = meanErrorPerImage(this.data[i], testResults[0][i], inpaintMaps[testCase]);
+                
+                errorsPerTestCase[testCase][0] += errorsPerImage[i][0];
+                errorsPerTestCase[testCase][1] += errorsPerImage[i][1];
+            }
+            errorsPerTestCase[testCase][0] /= brokenImages.length;
+            errorsPerTestCase[testCase][1] /= brokenImages.length;
+            
+            IO.writeErrorsPerImage(testName, testCase, errorsPerImage);
         }
+        IO.writeErrorsPerTestCase(testName, errorsPerTestCase);
+        
+        float meanErrorForCompleteTest = 0f;
+        for(int i = 0; i < errorsPerTestCase.length; ++i){
+            meanErrorForCompleteTest += errorsPerTestCase[i][0];
+        }
+        meanErrorForCompleteTest /= errorsPerTestCase.length;
+        System.out.println("Error: " + meanErrorForCompleteTest);
+        return meanErrorForCompleteTest;
     }
     
-    
+    public float meanErrorPerImage(float[] originalImage, float[] reconstructedImage, boolean[] inpaintMap){
+        int sum = 0;
+        float error = 0f;
+        for(int i = 0; i < inpaintMap.length; ++i){
+            int pos = i * 3;
+            if(inpaintMap[i]){
+                error += Math.abs(originalImage[pos] - reconstructedImage[pos]);
+                error += Math.abs(originalImage[pos + 1] - reconstructedImage[pos + 1]);
+                error += Math.abs(originalImage[pos + 2] - reconstructedImage[pos + 2]);
+                sum += 3;
+            }
+        }
+        float meanError = error / sum;
+        return meanError;
+    }
     
     public boolean[] createInpaintPositionsFromRect(Rectangle rect){
         boolean[] result = new boolean[64 * 64];
