@@ -22,19 +22,18 @@ public class Test {
         this.data = IO.loadTestData();
     }
     
-    public float run(IReconstruct recon, String testName) throws IOException{
+    public float[] run(IReconstruct recon, String testName) throws IOException{
         System.out.println("Test: " + testName);
         // generate test cases
-        Rectangle[] inpaintRects = new Rectangle[8];
+        Rectangle[] inpaintRects = new Rectangle[7];
         inpaintRects[0] = new Rectangle(0,0,32,64);
         inpaintRects[1] = new Rectangle(0,0,64,32);
         inpaintRects[2] = new Rectangle(0,32,64,32);
         
         inpaintRects[3] = new Rectangle(10,10,20,44);
-        inpaintRects[4] = new Rectangle(0,0,32,64);
-        inpaintRects[5] = new Rectangle(22,10,20,44);
-        inpaintRects[6] = new Rectangle(10,5,44,20);
-        inpaintRects[7] = new Rectangle(10,34,44,20);
+        inpaintRects[4] = new Rectangle(22,10,20,44);
+        inpaintRects[5] = new Rectangle(10,5,44,20);
+        inpaintRects[6] = new Rectangle(10,34,44,20);
         
         boolean[][] inpaintMaps = new boolean[inpaintRects.length][];
         for(int i = 0; i < inpaintMaps.length; ++i){
@@ -70,36 +69,42 @@ public class Test {
                 errorsPerTestCase[testCase][0] += errorsPerImage[i][0];
                 errorsPerTestCase[testCase][1] += errorsPerImage[i][1];
             }
-            errorsPerTestCase[testCase][0] /= brokenImages.length;
-            errorsPerTestCase[testCase][1] /= brokenImages.length;
+            errorsPerTestCase[testCase][0] = errorsPerTestCase[testCase][0] / brokenImages.length;
+            errorsPerTestCase[testCase][1] = errorsPerTestCase[testCase][1] / brokenImages.length;         
             
             IO.writeErrorsPerImage(testName, testCase, errorsPerImage);
         }
         IO.writeErrorsPerTestCase(testName, errorsPerTestCase);
         
-        float meanErrorForCompleteTest = 0f;
+        float[] meanErrorForCompleteTest = new float[]{0f, 0f};
         for(int i = 0; i < errorsPerTestCase.length; ++i){
-            meanErrorForCompleteTest += errorsPerTestCase[i][0];
+            meanErrorForCompleteTest[0] += errorsPerTestCase[i][0];
+            meanErrorForCompleteTest[1] += errorsPerTestCase[i][1];
         }
-        meanErrorForCompleteTest /= errorsPerTestCase.length;
-        System.out.println("Error: " + meanErrorForCompleteTest);
+        meanErrorForCompleteTest[0] /= errorsPerTestCase.length;
+        meanErrorForCompleteTest[1] /= errorsPerTestCase.length;
+        System.out.println("RMSE: " + meanErrorForCompleteTest[0]);
+        System.out.println("Baseline RMSE: " + meanErrorForCompleteTest[1]);
         return meanErrorForCompleteTest;
     }
     
     public float meanErrorPerImage(float[] originalImage, float[] reconstructedImage, boolean[] inpaintMap){
         int sum = 0;
-        float error = 0f;
+        int error = 0;
         for(int i = 0; i < inpaintMap.length; ++i){
             int pos = i * 3;
             if(inpaintMap[i]){
-                error += Math.abs(originalImage[pos] - reconstructedImage[pos]);
-                error += Math.abs(originalImage[pos + 1] - reconstructedImage[pos + 1]);
-                error += Math.abs(originalImage[pos + 2] - reconstructedImage[pos + 2]);
+                int deltaR = (int)(originalImage[pos]*255) - (int)(reconstructedImage[pos]*255);
+                int deltaG = (int)(originalImage[pos + 1]*255) - (int)(reconstructedImage[pos + 1]*255);
+                int deltaB = (int)(originalImage[pos + 2]*255) - (int)(reconstructedImage[pos + 2]*255);
+                error += deltaR * deltaR;
+                error += deltaG * deltaG;
+                error += deltaB * deltaB;
                 sum += 3;
             }
         }
-        float meanError = error / sum;
-        return meanError;
+        float meanError = (float)error / (float)sum;
+        return (float)Math.sqrt(meanError);
     }
     
     public boolean[] createInpaintPositionsFromRect(Rectangle rect){
